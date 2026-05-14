@@ -12,9 +12,14 @@ No setup required — open the link and start searching.
 
 ## Screenshots
 
-| Homepage | Today's Forecast | 6-Day Forecast |
-|---|---|---|
-| ![Homepage](images/HomepageScreenshot.png) | ![Today](images/OneDayScreenshot.png) | ![6-Day](images/6DayScreenshot.png) |
+**Homepage**
+![Homepage](images/HomepageScreenshot.png)
+
+**Today's Forecast**
+![Today](images/OneDayScreenshot.png)
+
+**6-Day Forecast**
+![6-Day](images/6DayScreenshot.png)
 
 ---
 
