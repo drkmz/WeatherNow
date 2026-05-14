@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WeatherNow &mdash; <%= forecast === '5day' ? weather.city.name : weather.name %></title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="results-page">
+
+  <header class="header">
+    <div class="logo">Weather<span>Now</span></div>
+  </header>
+
+  <!-- ── Compact search bar ─────────────────────────────── -->
+  <div class="card compact-card">
+    <form action="/search" method="GET" class="compact-form">
+
+      <div class="city-search-row">
+        <div class="city-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input
+            type="text"
+            name="city"
+            value="<%= city %>"
+            placeholder="e.g. Chicago, Tokyo, Paris"
+            required
+            autocomplete="off"
+          />
+        </div>
+        <button type="submit" class="btn-search-sm">Search</button>
+      </div>
+
+      <div class="toggle-row">
+        <div class="field">
+          <label>Units</label>
+          <div class="pill-track pill-sm">
+            <div class="pill-slider"></div>
+            <div class="toggle-option">
+              <input type="radio" name="units" id="res-units-f" value="imperial" <%= units === 'imperial' ? 'checked' : '' %> />
+              <label for="res-units-f">&deg;F</label>
+            </div>
+            <div class="toggle-option">
+              <input type="radio" name="units" id="res-units-c" value="metric" <%= units === 'metric' ? 'checked' : '' %> />
+              <label for="res-units-c">&deg;C</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Language</label>
+          <div class="pill-track pill-sm">
+            <div class="pill-slider"></div>
+            <div class="toggle-option">
+              <input type="radio" name="lang" id="res-lang-en" value="en" <%= lang === 'en' ? 'checked' : '' %> />
+              <label for="res-lang-en">EN</label>
+            </div>
+            <div class="toggle-option">
+              <input type="radio" name="lang" id="res-lang-es" value="es" <%= lang === 'es' ? 'checked' : '' %> />
+              <label for="res-lang-es">ES</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Forecast</label>
+          <div class="pill-track pill-sm">
+            <div class="pill-slider"></div>
+            <div class="toggle-option">
+              <input type="radio" name="forecast" id="res-forecast-today" value="today" <%= forecast === 'today' ? 'checked' : '' %> />
+              <label for="res-forecast-today">Today</label>
+            </div>
+            <div class="toggle-option">
+              <input type="radio" name="forecast" id="res-forecast-5day" value="5day" <%= forecast === '5day' ? 'checked' : '' %> />
+              <label for="res-forecast-5day">6-Day</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- ── Today's weather ────────────────────────────────── -->
+  <% if (forecast === 'today') { %>
+
+  <main class="card today-card">
+    <p class="results-location"><%= weather.name %>, <%= weather.sys.country %></p>
+
+    <img
+      class="weather-icon-lg"
+      src="https://openweathermap.org/img/wn/<%= weather.weather[0].icon %>@2x.png"
+      alt="<%= weather.weather[0].description %>"
+    />
+
+    <div class="results-temp">
+      <%= Math.round(weather.main.temp) %>&deg;<%= units === 'metric' ? 'C' : 'F' %>
+    </div>
+
+    <p class="results-desc"><%= weather.weather[0].description %></p>
+
+    <div class="results-grid">
+      <div class="results-stat">
+        <div class="stat-label">Feels Like</div>
+        <div class="stat-value"><%= Math.round(weather.main.feels_like) %>&deg;</div>
+      </div>
+      <div class="results-stat">
+        <div class="stat-label">Humidity</div>
+        <div class="stat-value"><%= weather.main.humidity %>%</div>
+      </div>
+      <div class="results-stat">
+        <div class="stat-label">Wind</div>
+        <div class="stat-value"><%= weather.wind.speed %> <%= units === 'metric' ? 'm/s' : 'mph' %></div>
+      </div>
+      <div class="results-stat">
+        <div class="stat-label">Visibility</div>
+        <div class="stat-value"><%= weather.visibility ? (weather.visibility / 1000).toFixed(1) + ' km' : 'N/A' %></div>
+      </div>
+      <div class="results-stat">
+        <div class="stat-label">High / Low</div>
+        <div class="stat-value"><%= Math.round(weather.main.temp_max) %>&deg; / <%= Math.round(weather.main.temp_min) %>&deg;</div>
+      </div>
+      <div class="results-stat">
+        <div class="stat-label">Pressure</div>
+        <div class="stat-value"><%= weather.main.pressure %> hPa</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── 5-Day forecast ─────────────────────────────────── -->
+  <% } else {
+    const DAY_NAMES   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    const dayGroups = {};
+    weather.list.forEach(item => {
+      const key = item.dt_txt.split(' ')[0];
+      if (!dayGroups[key]) dayGroups[key] = [];
+      dayGroups[key].push(item);
+    });
+
+    const days = Object.entries(dayGroups).map(([dateKey, slots]) => {
+      const [year, month, day] = dateKey.split('-').map(Number);
+      const d = new Date(year, month - 1, day);
+      const rep = slots.find(s => s.dt_txt.includes('12:00:00')) || slots[0];
+      const temps = slots.map(s => s.main.temp);
+      return {
+        dayName:  DAY_NAMES[d.getDay()],
+        dateStr:  MONTH_NAMES[month - 1] + ' ' + day,
+        rep,
+        high: Math.round(Math.max(...temps)),
+        low:  Math.round(Math.min(...temps))
+      };
+    });
+  %>
+
+  <section class="forecast-section">
+    <h2 class="forecast-heading">
+      <%= weather.city.name %>, <%= weather.city.country %>
+    </h2>
+
+    <div class="forecast-grid">
+      <% days.forEach(day => { %>
+      <div class="forecast-card">
+        <div class="fc-header">
+          <div class="fc-day"><%= day.dayName %></div>
+          <div class="fc-date"><%= day.dateStr %></div>
+        </div>
+        <img
+          class="fc-icon"
+          src="https://openweathermap.org/img/wn/<%= day.rep.weather[0].icon %>@2x.png"
+          alt="<%= day.rep.weather[0].description %>"
+        />
+        <div class="fc-temp">
+          <%= day.high %>&deg;<span class="fc-low"> / <%= day.low %>&deg;</span>
+        </div>
+        <div class="fc-desc"><%= day.rep.weather[0].description %></div>
+        <div class="fc-divider"></div>
+        <div class="fc-stats">
+          <div class="fc-stat">
+            <span class="fc-stat-label">Humidity</span>
+            <span class="fc-stat-value"><%= day.rep.main.humidity %>%</span>
+          </div>
+          <div class="fc-stat">
+            <span class="fc-stat-label">Wind</span>
+            <span class="fc-stat-value"><%= day.rep.wind.speed %> <%= units === 'metric' ? 'm/s' : 'mph' %></span>
+          </div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+  </section>
+
+  <% } %>
+
+  <footer class="footer">Powered by OpenWeatherMap</footer>
+
+</body>
+</html>

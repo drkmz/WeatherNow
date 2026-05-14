@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WeatherNow</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo">Weather<span>Now</span></div>
+    <p class="tagline">Real-time weather, anywhere in the world</p>
+  </header>
+
+  <main class="card">
+    <form action="/search" method="GET">
+
+      <!-- City -->
+      <div class="field">
+        <label for="city">City</label>
+        <div class="city-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input
+            type="text"
+            id="city"
+            name="city"
+            placeholder="e.g. Chicago, Tokyo, Paris"
+            required
+            autocomplete="off"
+          />
+        </div>
+      </div>
+
+      <!-- Units -->
+      <div class="field">
+        <label>Units</label>
+        <div class="pill-track">
+          <div class="pill-slider"></div>
+          <div class="toggle-option">
+            <input type="radio" name="units" id="units-f" value="imperial" checked />
+            <label for="units-f">Fahrenheit</label>
+          </div>
+          <div class="toggle-option">
+            <input type="radio" name="units" id="units-c" value="metric" />
+            <label for="units-c">Celsius</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Language -->
+      <div class="field">
+        <label>Language</label>
+        <div class="pill-track">
+          <div class="pill-slider"></div>
+          <div class="toggle-option">
+            <input type="radio" name="lang" id="lang-en" value="en" checked />
+            <label for="lang-en">English</label>
+          </div>
+          <div class="toggle-option">
+            <input type="radio" name="lang" id="lang-es" value="es" />
+            <label for="lang-es">Espa&#xf1;ol</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Forecast type -->
+      <div class="field">
+        <label>Forecast</label>
+        <div class="pill-track">
+          <div class="pill-slider"></div>
+          <div class="toggle-option">
+            <input type="radio" name="forecast" id="forecast-today" value="today" checked />
+            <label for="forecast-today">Today Only</label>
+          </div>
+          <div class="toggle-option">
+            <input type="radio" name="forecast" id="forecast-5day" value="5day" />
+            <label for="forecast-5day">6-Day Forecast</label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit">Get Weather</button>
+
+    </form>
+
+    <% if (typeof error !== 'undefined') { %>
+      <div class="error-msg">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <%= error %>
+      </div>
+    <% } %>
+  </main>
+
+  <footer class="footer">Powered by OpenWeatherMap</footer>
+
+</body>
+</html>
