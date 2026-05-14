@@ -10,9 +10,11 @@ No setup required — open the link and start searching.
 
 ---
 
-## Screenshot
+## Screenshots
 
-![WeatherNow Screenshot](screenshot.png)
+| Homepage | Today's Forecast | 6-Day Forecast |
+|---|---|---|
+| ![Homepage](images/HomepageScreenshot.png) | ![Today](images/OneDayScreenshot.png) | ![6-Day](images/6DayScreenshot.png) |
 
 ---
 
